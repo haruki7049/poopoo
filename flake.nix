@@ -38,6 +38,7 @@
           rust = pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain.toml;
           craneLib = (inputs.crane.mkLib pkgs).overrideToolchain rust;
           overlays = [ inputs.rust-overlay.overlays.default ];
+
           src = lib.cleanSource ./.;
           buildInputs = [ ];
           nativeBuildInputs = [
@@ -53,6 +54,7 @@
           cargoArtifacts = craneLib.buildDepsOnly {
             inherit src buildInputs nativeBuildInputs;
           };
+
           poopoo = craneLib.buildPackage {
             inherit
               src
@@ -66,7 +68,6 @@
 
             meta = {
               licenses = [ lib.licenses.mit ];
-              mainProgram = "";
             };
           };
           cargo-clippy = craneLib.cargoClippy {
