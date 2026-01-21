@@ -1,0 +1,6 @@
+[application]
+name = "poopoo"
+asset_dir = "public"
+
+[web.app]
+title = "poopoo"

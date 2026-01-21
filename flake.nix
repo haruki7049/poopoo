@@ -39,36 +39,16 @@
           craneLib = (inputs.crane.mkLib pkgs).overrideToolchain rust;
           overlays = [ inputs.rust-overlay.overlays.default ];
           src = lib.cleanSource ./.;
-          buildInputs =
-            lib.optionals pkgs.stdenv.isLinux [
-              pkgs.pkg-config
-              pkgs.udev
-              pkgs.alsa-lib
-              pkgs.vulkan-loader
-              pkgs.xorg.libX11
-              pkgs.xorg.libXcursor
-              pkgs.xorg.libXi
-              pkgs.xorg.libXrandr
-              pkgs.libxkbcommon
-              pkgs.wayland
-            ]
-            ++ [
-              pkgs.llvmPackages.libclang.lib
-            ];
+          buildInputs = [ ];
           nativeBuildInputs = [
-            # Build tools
-            pkgs.pkg-config
-            pkgs.makeWrapper
-
-            # Rust
+            # Compiler
             rust
+            pkgs.dioxus-cli
+            pkgs.wasm-bindgen-cli
+            pkgs.binaryen
 
-            # Nix
+            # LSP
             pkgs.nil
-
-            # Linker
-            pkgs.llvmPackages.clang
-            pkgs.llvmPackages.lld
           ];
           cargoArtifacts = craneLib.buildDepsOnly {
             inherit src buildInputs nativeBuildInputs;
