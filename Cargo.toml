@@ -2,6 +2,14 @@
 name = "poopoo"
 version = "0.1.0"
 edition = "2024"
+authors = ["haruki7049 <tontonkirikiri@gmail.com>"]
 
 [dependencies]
-dioxus = { version = "0.7.3", features = ["router", "web"] }
+dioxus = { version = "0.7.3", features = ["router", "fullstack"] }
+
+[features]
+default = ["web"]
+web = ["dioxus/web"]
+desktop = ["dioxus/desktop"]
+mobile = ["dioxus/mobile"]
+server = ["dioxus/server"]
