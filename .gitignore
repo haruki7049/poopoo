@@ -9,9 +9,14 @@ debug/
 # MSVC Windows builds of rustc generate these, which store debugging information
 *.pdb
 
+## Other ignores
+
 # Nix's result
 result*
 result-*
 
 # nix-direnv
 .direnv/
+
+# Postgre SQL
+/data/

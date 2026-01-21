@@ -2,7 +2,8 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     systems.url = "github:nix-systems/default";
-    crane.url = "github:ipetkov/crane";
+
+    # flake modules
     flake-compat.url = "github:edolstra/flake-compat";
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
@@ -12,6 +13,11 @@
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
+    services-flake.url = "github:juspay/services-flake";
+
+    # Rust
+    crane.url = "github:ipetkov/crane";
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -25,6 +31,7 @@
 
       imports = [
         inputs.treefmt-nix.flakeModule
+        inputs.process-compose-flake.flakeModule
       ];
 
       perSystem =
@@ -32,6 +39,8 @@
           pkgs,
           lib,
           system,
+          config,
+          self',
           ...
         }:
         let
@@ -50,6 +59,10 @@
 
             # LSP
             pkgs.nil
+
+            # Other Tools
+            pkgs.rainfrog
+            self'.packages.database-runner
           ];
           cargoArtifacts = craneLib.buildDepsOnly {
             inherit src buildInputs nativeBuildInputs;
@@ -94,6 +107,32 @@
             inherit system overlays;
           };
 
+          process-compose.database-runner = { config, ... }:
+          let
+            dbName = "poopooDatabase";
+          in
+          {
+            imports = [
+              inputs.services-flake.processComposeModules.default
+            ];
+
+            services.postgres."pg1" = {
+              enable = true;
+              port = 5432;
+            };
+
+            settings.processes.test = {
+              command = pkgs.writeShellApplication {
+                name = "pg1-test";
+                runtimeInputs = [ config.services.postgres.pg1.package ];
+                text = ''
+                  echo 'SELECT version();' | psql -h 127.0.0.1 ${dbName}
+                '';
+              };
+              depends_on."pg1".condition = "process_healthy";
+            };
+          };
+
           treefmt = {
             projectRootFile = "flake.nix";
 
@@ -130,6 +169,10 @@
 
           devShells.default = pkgs.mkShell {
             inherit buildInputs nativeBuildInputs;
+
+            inputsFrom = [
+              config.process-compose.database-runner.services.outputs.devShell
+            ];
 
             shellHook = ''
               export PS1="\n[nix-shell:\w]$ "
