@@ -120,6 +120,13 @@
               services.postgres."pg1" = {
                 enable = true;
                 port = 5432;
+
+                initialDatabases = [
+                  {
+                    name = dbName;
+                    schemas = [ ./migrations/default.sql ];
+                  }
+                ];
               };
 
               settings.processes.pgweb =
