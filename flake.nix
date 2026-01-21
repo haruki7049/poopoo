@@ -121,6 +121,16 @@
               port = 5432;
             };
 
+            settings.processes.pgweb =
+              let
+                pgcfg = config.services.postgres.pg1;
+              in
+              {
+                environment.PGWEB_DATABASE_URL = pgcfg.connectionURI { inherit dbName; };
+                command = pkgs.pgweb;
+                depends_on."pg1".condition = "process_healthy";
+              };
+
             settings.processes.test = {
               command = pkgs.writeShellApplication {
                 name = "pg1-test";
