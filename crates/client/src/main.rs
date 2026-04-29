@@ -4,7 +4,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing_subscriber::fmt::init();
 
     let native_options = eframe::NativeOptions {
-        viewport: eframe::egui::ViewportBuilder::default()
+        viewport: egui::ViewportBuilder::default()
             .with_inner_size([1280.0, 720.0])
             .with_min_inner_size([640.0, 360.0]),
         ..Default::default()
@@ -21,6 +21,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 #[derive(Default)]
 struct PoopooApp {
     counter: i32,
+    input_buffer: String,
 }
 
 impl PoopooApp {
@@ -36,12 +37,20 @@ impl PoopooApp {
 impl eframe::App for PoopooApp {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show_inside(ui, |ui| {
-            ui.heading("Poopoo");
+            egui::Panel::left("Hoge").show_inside(ui, |ui| {
+                ui.text_edit_multiline(&mut self.input_buffer);
+                ui.separator();
+
+                ui.label(format!("self.input_buffer: {}", self.input_buffer));
+            });
 
             ui.horizontal(|ui| {
                 if ui.button("Counter +1").clicked() {
                     self.counter += 1;
                 }
+
+                ui.separator();
+
                 if ui.button("Counter -1").clicked() {
                     self.counter -= 1;
                 }
