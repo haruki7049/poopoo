@@ -21,7 +21,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 #[derive(Default)]
 struct PoopooApp {
     counter: i32,
-    input_buffer: String,
+    buffer: Buffer,
+}
+
+#[derive(Default)]
+struct Buffer {
+    inputs: String,
 }
 
 impl PoopooApp {
@@ -38,10 +43,10 @@ impl eframe::App for PoopooApp {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show_inside(ui, |ui| {
             egui::Panel::left("Hoge").show_inside(ui, |ui| {
-                ui.text_edit_multiline(&mut self.input_buffer);
+                ui.text_edit_multiline(&mut self.buffer.inputs);
                 ui.separator();
 
-                ui.label(format!("self.input_buffer: {}", self.input_buffer));
+                ui.label(format!("self.buffer.inputs: {}", self.buffer.inputs));
             });
 
             ui.horizontal(|ui| {
