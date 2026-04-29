@@ -1,0 +1,15 @@
+[package]
+name = "poopoo_client"
+description = "poopoo client"
+authors.workspace = true
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "poopoo"
+path = "src/main.rs"
+
+[dependencies]

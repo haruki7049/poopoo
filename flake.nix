@@ -51,18 +51,8 @@
           src = lib.cleanSource ./.;
           buildInputs = [ ];
           nativeBuildInputs = [
-            # Compiler
-            rust
-            pkgs.dioxus-cli
-            pkgs.wasm-bindgen-cli
-            pkgs.binaryen
-
-            # LSP
-            pkgs.nil
-
-            # Other Tools
-            pkgs.rainfrog
-            self'.packages.database-runner
+            rust # Rust toolchain
+            pkgs.nil # Nix LSP
           ];
           cargoArtifacts = craneLib.buildDepsOnly {
             inherit src buildInputs nativeBuildInputs;
@@ -81,6 +71,7 @@
 
             meta = {
               licenses = [ lib.licenses.mit ];
+              mainProgram = "poopoo";
             };
           };
           cargo-clippy = craneLib.cargoClippy {
@@ -110,7 +101,8 @@
           process-compose.database-runner =
             { config, ... }:
             let
-              dbName = "poopooDatabase";
+              dbName = "poopoo-database";
+              pgcfg = config.services.postgres.pg1;
             in
             {
               imports = [
@@ -129,15 +121,11 @@
                 ];
               };
 
-              settings.processes.pgweb =
-                let
-                  pgcfg = config.services.postgres.pg1;
-                in
-                {
-                  environment.PGWEB_DATABASE_URL = pgcfg.connectionURI { inherit dbName; };
-                  command = pkgs.pgweb;
-                  depends_on."pg1".condition = "process_healthy";
-                };
+              settings.processes.pgweb = {
+                environment.PGWEB_DATABASE_URL = pgcfg.connectionURI { inherit dbName; };
+                command = pkgs.pgweb;
+                depends_on."pg1".condition = "process_healthy";
+              };
 
               settings.processes.test = {
                 command = pkgs.writeShellApplication {
@@ -189,6 +177,7 @@
             inherit buildInputs nativeBuildInputs;
 
             inputsFrom = [
+              config.treefmt.build.devShell
               config.process-compose.database-runner.services.outputs.devShell
             ];
 
