@@ -13,3 +13,4 @@ name = "poopoo"
 path = "src/main.rs"
 
 [dependencies]
+eframe.workspace = true
