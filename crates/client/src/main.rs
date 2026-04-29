@@ -1,4 +1,5 @@
 use eframe::egui;
+use poopoo_types::Post;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     tracing_subscriber::fmt::init();
@@ -20,7 +21,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 #[derive(Default)]
 struct PoopooApp {
-    counter: i32,
+    posts: Vec<Post>,
     buffer: Buffer,
 }
 
@@ -31,11 +32,13 @@ struct Buffer {
 
 impl PoopooApp {
     fn new(_cc: &eframe::CreationContext<'_>) -> Self {
-        // Customize egui here with cc.egui_ctx.set_fonts and cc.egui_ctx.set_global_style.
-        // Restore app state using cc.storage (requires the "persistence" feature).
-        // Use the cc.gl (a glow::Context) to create graphics shaders and buffers that you can use
-        // for e.g. egui::PaintCallback.
-        Self::default()
+        Self {
+            posts: vec![
+                Post::new("haruki7049".into(), "Hoge".into()),
+                Post::new("haruki7049".into(), "Fuga".into()),
+            ],
+            ..Default::default()
+        }
     }
 }
 
@@ -49,19 +52,15 @@ impl eframe::App for PoopooApp {
                 ui.label(format!("self.buffer.inputs: {}", self.buffer.inputs));
             });
 
-            ui.horizontal(|ui| {
-                if ui.button("Counter +1").clicked() {
-                    self.counter += 1;
-                }
-
-                ui.separator();
-
-                if ui.button("Counter -1").clicked() {
-                    self.counter -= 1;
-                }
-            });
-
-            ui.label(format!("self.counter = {}", self.counter));
+            egui::Frame::NONE
+                .inner_margin(egui::Margin::symmetric(20, 10))
+                .show(ui, |ui| {
+                    ui.vertical(|ui| {
+                        for post in &self.posts {
+                            ui.label(format!("{}: {}", post.username, post.content));
+                        }
+                    });
+                });
         });
     }
 }
