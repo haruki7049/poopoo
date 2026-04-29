@@ -2508,6 +2508,8 @@ name = "poopoo_client"
 version = "0.1.0"
 dependencies = [
  "eframe",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]

@@ -1,6 +1,8 @@
 use eframe::egui;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    tracing_subscriber::fmt::init();
+
     let native_options = eframe::NativeOptions::default();
     eframe::run_native(
         "Poopoo",
@@ -31,12 +33,14 @@ impl eframe::App for PoopooApp {
         egui::CentralPanel::default().show_inside(ui, |ui| {
             ui.heading("Poopoo");
 
-            if ui.button("Counter +1").clicked() {
-                self.counter += 1;
-            }
-            if ui.button("Counter -1").clicked() {
-                self.counter -= 1;
-            }
+            ui.horizontal(|ui| {
+                if ui.button("Counter +1").clicked() {
+                    self.counter += 1;
+                }
+                if ui.button("Counter -1").clicked() {
+                    self.counter -= 1;
+                }
+            });
 
             ui.label(format!("self.counter = {}", self.counter));
         });
