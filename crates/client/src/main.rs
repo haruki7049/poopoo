@@ -12,7 +12,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[derive(Default)]
-struct PoopooApp {}
+struct PoopooApp {
+    counter: i32,
+}
 
 impl PoopooApp {
     fn new(_cc: &eframe::CreationContext<'_>) -> Self {
@@ -27,7 +29,16 @@ impl PoopooApp {
 impl eframe::App for PoopooApp {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show_inside(ui, |ui| {
-            ui.heading("Hello World!");
+            ui.heading("Poopoo");
+
+            if ui.button("Counter +1").clicked() {
+                self.counter += 1;
+            }
+            if ui.button("Counter -1").clicked() {
+                self.counter -= 1;
+            }
+
+            ui.label(format!("self.counter = {}", self.counter));
         });
     }
 }
