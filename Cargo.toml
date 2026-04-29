@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/xtask", "crates/client", "crates/server"]
+members = ["crates/xtask", "crates/client", "crates/server", "crates/types"]
 
 [workspace.package]
 authors = ["haruki7049 <tontonkirikiri@gmail.com>"]
