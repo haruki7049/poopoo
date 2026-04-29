@@ -49,7 +49,11 @@
           overlays = [ inputs.rust-overlay.overlays.default ];
 
           src = lib.cleanSource ./.;
-          buildInputs = [ ];
+          env.LD_LIBRARY_PATH = lib.makeLibraryPath buildInputs;
+          buildInputs = lib.optionals pkgs.stdenv.isLinux [
+            pkgs.wayland
+            pkgs.libxkbcommon
+          ];
           nativeBuildInputs = [
             rust # Rust toolchain
             pkgs.nil # Nix LSP
@@ -174,7 +178,7 @@
           };
 
           devShells.default = pkgs.mkShell {
-            inherit buildInputs nativeBuildInputs;
+            inherit env buildInputs nativeBuildInputs;
 
             inputsFrom = [
               config.treefmt.build.devShell
