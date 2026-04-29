@@ -53,6 +53,7 @@
           buildInputs = lib.optionals pkgs.stdenv.isLinux [
             pkgs.wayland
             pkgs.libxkbcommon
+            pkgs.libGL
           ];
           nativeBuildInputs = [
             rust # Rust toolchain
